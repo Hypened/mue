@@ -135,4 +135,8 @@
     "name": "中文 (繁體)",
     "value": "zh_Hant"
   }
+    {
+    "name": "한국어",
+    "value": "ko"
+  }
 ]
