@@ -2,15 +2,15 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ "master", "main" ] # master나 main 어디에 푸시해도 작동
-  workflow_dispatch: # 우리가 수동으로 버튼을 눌러 실행할 수 있게 해줍니다.
+    branches: [ "master", "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write # GHCR에 이미지를 저장할 권한
+      packages: write
 
     steps:
       - name: Checkout code
@@ -23,10 +23,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # 계정명을 소문자로 변환하는 단계 추가
+      - name: lowercase repo
+        run: |
+          echo "REPO=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          # 최종 주소: ghcr.io/de2ese/mue:latest
-          tags: ghcr.io/${{ github.repository }}:latest
+          # 소문자로 변환된 REPO 변수를 사용합니다.
+          tags: ghcr.io/${{ env.REPO }}:latest
